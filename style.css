@@ -5,6 +5,7 @@ h1{
     color: rgb(17, 255, 0);
     font-family: fantasy;
     text-align: center;
+    margin-bottom: 3px;
 }
 ul{
     list-style-type:none;
@@ -19,12 +20,31 @@ li{
     color: whitesmoke;
     border-radius: 5px;
     padding: 7px;
+    box-shadow:0px 0px 5px 4px white ;
 }
-
+hr{
+    margin: 0px;
+}
 /*Classes*/
 .btn-delete{
+    cursor: pointer;
 
+    background-color: red;
+    box-shadow:0px 0px 5px 4px black;/*Rever significado de cada valor*/
+    
 }
 .btn-new{
+    position: fixed;/*Torna o icone fixo independente do que eu fiz com a página*/
 
+    right: 10px;
+    bottom:30px;
+    background-color: green;
+    font-size: 25px;
+    cursor: pointer;
+    width: 45px;
+    height: 40px;
+}
+.habito-concluido{
+    background-color: rgb(98, 180, 17);
+    box-shadow:2px 2px 5px 4px white ;
 }
