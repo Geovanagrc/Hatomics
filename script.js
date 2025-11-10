@@ -20,7 +20,7 @@ function addElement(){
     novoElemento.appendChild(botaoRemover);
 
     botaoRemover.addEventListener("click",removeElement);//Ouvinte para remover
-
+    check.addEventListener("change",habitoFeito);
 }
 botaoAdd.addEventListener("click",addElement); // ouvinte
 
@@ -34,3 +34,11 @@ function removeElement(evento){
     avoDoBotao.removeChild(maeDoBotao)
 }
 botaoRemov.addEventListener("click",removeElement);//Ouvinte para remover
+
+//Concluir hábito
+function habitoFeito(evento){//coloquei o ouvinte na função addElement
+    const localDoCheck = evento.target;
+    const maeDoCheck = localDoCheck.parentElement; // Descobre o li que queremos
+
+    maeDoCheck.classList.toggle("habito-concluido");//Se a chave não existe ele adiciona, se existe ele retira.
+}
