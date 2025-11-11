@@ -46,3 +46,6 @@ li{
     background-color: rgb(98, 180, 17);
     box-shadow:2px 2px 5px 4px white ;
 }
+.hidden{/*Vai esconder o texto ou a input quando o usuario clicar*/
+    display: none;
+}

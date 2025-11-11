@@ -7,29 +7,36 @@ function addElement(nomeDoHabito = "Novo Hábito!",estadoDoHabito = false){
     const check = document.createElement("input");
     const listaMae = document.querySelector("#listaMae");
     const textoDoHabito = document.createElement("span"); // como span fica mais organizado
+    const entrada = document.createElement("input"); // É a entrada para realizar o update
+
 
     textoDoHabito.textContent = nomeDoHabito;
     botaoRemover.textContent = "X";
     botaoRemover.className = "btn-delete"; //É a classe do CSS para botões.
     check.type = "checkbox";
+    entrada.type = "text";
+    entrada.classList.add("hidden") // Mantem o botao escondido inicialmente
+    entrada.value = "Novo hábito!"
     //novoElemento.className = "habito-concluido";
-    //Verificando estadoDoHabito
-   
-
+    
     novoElemento.appendChild(check);
     novoElemento.appendChild(textoDoHabito);
+    novoElemento.appendChild(entrada)
     novoElemento.appendChild(botaoRemover);
     listaMae.appendChild(novoElemento);
 
-
+    //Verificando o estado do hábito
     if(estadoDoHabito === true){
         novoElemento.classList.add("habito-concluido");
         check.checked = true; //Marca o checkbox de acordo com o estado do hábito
     }
 
+    //Ouvintes
     botaoRemover.addEventListener("click",removeElement);//Ouvinte para remover
     check.addEventListener("change",habitoFeito);// Ouvinte para "Marcar como feito"
-
+    textoDoHabito.addEventListener("click",alterarNome);
+    entrada.addEventListener("blur",salvarNome);
+    //Salvando após adicionar um hábito.
     salvarHabitos(); //Após adicionar salva a pag
 }
 
@@ -95,3 +102,26 @@ function carregarHabitos(){
 
 }
 carregarHabitos();
+
+//Gerenciando o nome do hábito
+    //Update de nome
+function alterarNome(evento){
+    const span = evento.target;
+    const paiDeTodos = span.parentElement;
+    const input = paiDeTodos.querySelector("input[type='text']")
+    
+    span.classList.add("hidden")
+    input.classList.remove("hidden")
+    
+    input.focus();
+}
+    //Salvar nome
+function salvarNome(evento){
+    const input = evento.target;
+    const paiDeTodos = input.parentElement;
+    const span = paiDeTodos.querySelector("span")
+    
+    span.textContent = input.value;
+    span.classList.remove("hidden");
+    input.classList.add("hidden");
+}
