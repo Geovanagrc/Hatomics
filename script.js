@@ -1,6 +1,6 @@
 
 //Adicionar
-const botaoAdd = document.querySelector(".btn-new")//Identificando botão no site
+const botaoAdd = document.querySelector(".btn-new") //Identificando botão no site
 function addElement(nomeDoHabito = "Novo Hábito!",estadoDoHabito = false){
     const novoElemento = document.createElement("li");
     const botaoRemover = document.createElement("button");
@@ -121,7 +121,13 @@ function salvarNome(evento){
     const paiDeTodos = input.parentElement;
     const span = paiDeTodos.querySelector("span")
     
+  
     span.textContent = input.value;
+      if(span.textContent === ""){//Se não inserir nada voltar a ser "Novo hábito"
+        span.textContent = "Novo hábito!"
+    }
     span.classList.remove("hidden");
     input.classList.add("hidden");
+    
+    salvarHabitos();
 }

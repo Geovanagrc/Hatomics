@@ -3,7 +3,7 @@ body{
 }
 h1{
     color: rgb(17, 255, 0);
-    font-family: fantasy;
+    font-family:fantasy;
     text-align: center;
     margin-bottom: 3px;
 }
@@ -20,7 +20,20 @@ li{
     color: whitesmoke;
     border-radius: 5px;
     padding: 7px;
-    box-shadow:0px 0px 5px 4px white ;
+    /*box-shadow:0px 0px 5px 4px white;*/
+}
+input[type="checkbox"]{
+    cursor:pointer;
+}
+header{
+    position: relative;
+    padding: 1px;
+}
+header img{
+    position: absolute;
+    left: 5px;  
+    height: 80px; 
+    width: 80px;  
 }
 
 /*Classes*/
@@ -28,7 +41,7 @@ li{
     cursor: pointer;
 
     background-color: red;
-    box-shadow:0px 0px 5px 4px black;/*Rever significado de cada valor*/
+    /*box-shadow:0px 0px 5px 4px black;/*Rever significado de cada valor*/
     
 }
 .btn-new{
@@ -44,7 +57,7 @@ li{
 }
 .habito-concluido{
     background-color: rgb(98, 180, 17);
-    box-shadow:2px 2px 5px 4px white ;
+    /*box-shadow:2px 2px 5px 4px white ;*/
 }
 .hidden{/*Vai esconder o texto ou a input quando o usuario clicar*/
     display: none;
