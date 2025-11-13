@@ -35,6 +35,13 @@ header img{
     height: 80px; 
     width: 80px;  
 }
+form{
+    display: flex;
+    justify-content: space-around;/*Cria um espaçamento uniforme*/
+    background-color: green;
+    padding: 5px;
+    overflow:scroll;
+}
 
 /*Classes*/
 .btn-delete{
@@ -61,4 +68,11 @@ header img{
 }
 .hidden{/*Vai esconder o texto ou a input quando o usuario clicar*/
     display: none;
+}
+.dica{
+    background-color: #2c2c2c;
+    border-radius: 5px;
+    border-style:double;
+    color:darkgray;
+    border-color: rgb(90, 103, 103);
 }

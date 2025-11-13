@@ -10,13 +10,13 @@ function addElement(nomeDoHabito = "Novo Hábito!",estadoDoHabito = false){
     const entrada = document.createElement("input"); // É a entrada para realizar o update
 
 
-    textoDoHabito.textContent = nomeDoHabito;
+    textoDoHabito.textContent = nomeDoHabito; //Usa o argumento da função
     botaoRemover.textContent = "X";
     botaoRemover.className = "btn-delete"; //É a classe do CSS para botões.
     check.type = "checkbox";
     entrada.type = "text";
     entrada.classList.add("hidden") // Mantem o botao escondido inicialmente
-    entrada.value = "Novo hábito!"
+    entrada.value = nomeDoHabito
     //novoElemento.className = "habito-concluido";
     
     novoElemento.appendChild(check);
@@ -40,7 +40,32 @@ function addElement(nomeDoHabito = "Novo Hábito!",estadoDoHabito = false){
     salvarHabitos(); //Após adicionar salva a pag
 }
 
-botaoAdd.addEventListener("click",()=>{addElement();}); // ouvinte com Arrow function devido aos erros de parametro na função addElement
+botaoAdd.addEventListener("click",mostrarformulario); // ouvinte com Arrow function devido aos erros de parametro na função addElement
+
+//Formulário para nome do hábito
+    //Abrir formulário de nome
+function mostrarformulario(){
+    const form = document.querySelector("form");
+    const input = document.querySelector("input[type = 'text']")
+    input.value = "" // Limpa o que ficou no input anteriormente
+    form.classList.remove("hidden")
+}
+const form = document.querySelector("#form-novoHabito");
+    //enviar formulário
+function enviarFormulario(evento){
+    evento.preventDefault();//Por padrão o submit recarregaria a página para enviar a info para o servidor. O método contrária isso.
+    const form = document.querySelector("#form-novoHabito") 
+    const input = form.querySelector("input[type = 'text']")//texto que o usúario inseriu
+    if (input.value.trim() === ""){ // trim() remove os espaços antes e depois
+        alert("Insira um nome para o hábito!"); // Mostra uma mensagem de alerta no navegador.
+        return; // para a função aqui
+    }
+
+    addElement(input.value);
+    form.classList.add("hidden")
+    //A função addElement já vai salvar a pag.
+}
+form.addEventListener("submit",enviarFormulario)
 
 //Remover
 function removeElement(evento){
@@ -64,7 +89,8 @@ function habitoFeito(evento){//coloquei o ouvinte na função addElement
 
 }
 
-//Salvar hábitos
+//Local Storage
+    //Salvar hábitos
 function salvarHabitos(){
     const habitos = document.querySelectorAll("li"); //Faz um array com todos os meus hábitos
     const habitosTratados = []; //é onde vou armazenar os habitos já tratados pelo for
@@ -86,7 +112,7 @@ function salvarHabitos(){
     localStorage.setItem("habitos",JSON.stringify(habitosTratados)) //Cria um item no local storage (em forma de texto) com a array de habitos
     
 }
-//Carregar hábitos
+    //Carregar hábitos
 function carregarHabitos(){
     const armazenados = localStorage.getItem("habitos"); //pega o que esta no local storage 
 
