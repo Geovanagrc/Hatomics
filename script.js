@@ -1,7 +1,7 @@
 
 //Adicionar
 const botaoAdd = document.querySelector(".btn-new") //Identificando botão no site
-function addElement(nomeDoHabito = "Novo Hábito!",estadoDoHabito = false){
+function addElement(nomeDoHabito = "Novo Hábito!",estadoDoHabito = false,dificuldade = "facil"){
     const novoElemento = document.createElement("li");
     const botaoRemover = document.createElement("button");
     const check = document.createElement("input");
@@ -9,6 +9,7 @@ function addElement(nomeDoHabito = "Novo Hábito!",estadoDoHabito = false){
     const textoDoHabito = document.createElement("span"); // como span fica mais organizado
     const entrada = document.createElement("input"); // É a entrada para realizar o update
 
+    novoElemento.dataset.dificuldade = dificuldade;// é um atributo que coloca uma classe do tipo data-dificuldade no li
 
     textoDoHabito.textContent = nomeDoHabito; //Usa o argumento da função
     botaoRemover.textContent = "X";
@@ -54,14 +55,16 @@ const form = document.querySelector("#form-novoHabito");
     //enviar formulário
 function enviarFormulario(evento){
     evento.preventDefault();//Por padrão o submit recarregaria a página para enviar a info para o servidor. O método contrária isso.
-    const form = document.querySelector("#form-novoHabito") 
-    const input = form.querySelector("input[type = 'text']")//texto que o usúario inseriu
+    const form = document.querySelector("#form-novoHabito");
+    const input = form.querySelector("input[type = 'text']");//texto que o usúario inseriu
+    const selectDificuldade = form.querySelector("#select-dificuldade"); //É o select das dificuldades do hábito.
+
     if (input.value.trim() === ""){ // trim() remove os espaços antes e depois
         alert("Insira um nome para o hábito!"); // Mostra uma mensagem de alerta no navegador.
         return; // para a função aqui
     }
 
-    addElement(input.value);
+    addElement(input.value,false,selectDificuldade.value);
     form.classList.add("hidden")
     //A função addElement já vai salvar a pag.
 }
@@ -99,13 +102,14 @@ function salvarHabitos(){
         //Verificando o nome do hábito
         const spanHabito = habito.querySelector("span");
         const nomeDoHabito = spanHabito.textContent;
-        
+        const dificuldade = habito.dataset.dificuldade;//Lê o class data que criamos em addElement
         //Verificando se o hábito esta marcado como feito
         const habitoFeito = habito.classList.contains("habito-concluido");// Retorna True ou false
 
         habitosTratados.push({
             nome:nomeDoHabito,
-            estado: habitoFeito
+            estado: habitoFeito,
+            dificuldade: dificuldade
         })
     }
 
@@ -123,7 +127,7 @@ function carregarHabitos(){
     const habitosCodigo = JSON.parse(armazenados);//Transforma o texto em codigo novamente
 
     for(const habitos of habitosCodigo){
-        addElement(habitos.nome,habitos.estado);//Joga o nome e o estado de cada hábito para a função addElement
+        addElement(habitos.nome,habitos.estado,habitos.dificuldade);//Joga o nome e o estado de cada hábito para a função addElement
     }
 
 }

@@ -36,14 +36,13 @@ header img{
     width: 80px;  
 }
 form{
-    display: flex;
-    justify-content: space-around;/*Cria um espaçamento uniforme*/
+    display:grid ;
     background-color: green;
     padding: 5px;
     overflow:scroll;
 }
 
-/*Classes*/
+/*Seletores de Classes*/
 .btn-delete{
     cursor: pointer;
 
@@ -75,4 +74,15 @@ form{
     border-style:double;
     color:darkgray;
     border-color: rgb(90, 103, 103);
+}
+
+/*Seletores de atributo*/
+li[data-dificuldade = "facil"]{
+    box-shadow:2px 2px 5px 1px rgb(81, 81, 249) ;
+}
+li[data-dificuldade = "medio"]{
+    box-shadow:2px 2px 5px 1px rgb(4, 247, 61) ;
+}
+li[data-dificuldade = "dificil"]{
+    box-shadow:2px 2px 5px 1px rgb(228, 5, 5);
 }
