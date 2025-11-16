@@ -1,7 +1,7 @@
 
 //Adicionar
 const botaoAdd = document.querySelector(".btn-new") //Identificando botão no site
-function addElement(nomeDoHabito = "Novo Hábito!",estadoDoHabito = false,dificuldade = "facil"){
+function addElement(nomeDoHabito = "Novo Hábito!",estadoDoHabito = false,dificuldade = "facil",estaCarregando = false){
     const novoElemento = document.createElement("li");
     const botaoRemover = document.createElement("button");
     const check = document.createElement("input");
@@ -38,7 +38,9 @@ function addElement(nomeDoHabito = "Novo Hábito!",estadoDoHabito = false,dificu
     textoDoHabito.addEventListener("click",alterarNome);
     entrada.addEventListener("blur",salvarNome);
     //Salvando após adicionar um hábito.
-    salvarHabitos(); //Após adicionar salva a pag
+    if(estaCarregando === false){
+        salvarHabitos(); //Após adicionar salva a pag
+    }
 }
 
 botaoAdd.addEventListener("click",mostrarformulario); // ouvinte com Arrow function devido aos erros de parametro na função addElement
@@ -46,8 +48,8 @@ botaoAdd.addEventListener("click",mostrarformulario); // ouvinte com Arrow funct
 //Formulário para nome do hábito
     //Abrir formulário de nome
 function mostrarformulario(){
-    const form = document.querySelector("form");
-    const input = document.querySelector("input[type = 'text']")
+    const form = document.querySelector("#form-novoHabito");
+    const input = form.querySelector("input[type = 'text']")
     input.value = "" // Limpa o que ficou no input anteriormente
     form.classList.remove("hidden")
 }
@@ -85,9 +87,43 @@ function removeElement(evento){
 function habitoFeito(evento){//coloquei o ouvinte na função addElement
     const localDoCheck = evento.target;
     const maeDoCheck = localDoCheck.parentElement; // Descobre o li que queremos
+    const moedas  = localStorage.getItem("minhasMoedas");
+    const visor = document.querySelector("#moedas")
+    let totalMoedas = parseInt(moedas);
+    const moedasFacil = 1;
+    const moedasMedio = 2;
+    const moedasDificil = 3;
 
-    maeDoCheck.classList.toggle("habito-concluido");//Se a chave não existe ele adiciona, se existe ele retira.
 
+    maeDoCheck.classList.toggle("habito-concluido");//Se a class não existe ele adiciona, se existe ele retira.
+
+
+    if (maeDoCheck.classList.contains("habito-concluido")===false){//Se o user marcou e desmarcou as moedas que ele recebeu devem ser retiradas
+        if (maeDoCheck.dataset.dificuldade === "facil"){
+            totalMoedas -= moedasFacil;
+        }
+        if (maeDoCheck.dataset.dificuldade === "medio"){
+            totalMoedas -= moedasMedio;
+        }
+        if (maeDoCheck.dataset.dificuldade === "dificil"){
+            totalMoedas -= moedasDificil;
+        }
+    }
+    else{
+        if (maeDoCheck.dataset.dificuldade === "facil"){
+            totalMoedas += moedasFacil;
+        }
+        if (maeDoCheck.dataset.dificuldade === "medio"){
+            totalMoedas += moedasMedio;
+        }
+        if (maeDoCheck.dataset.dificuldade === "dificil"){
+            totalMoedas += moedasDificil;
+        }
+    }
+
+    visor.textContent = totalMoedas
+
+    salvarMoedas(totalMoedas);
     salvarHabitos(); //Após adicionar salva a pag
 
 }
@@ -97,6 +133,7 @@ function habitoFeito(evento){//coloquei o ouvinte na função addElement
 function salvarHabitos(){
     const habitos = document.querySelectorAll("li"); //Faz um array com todos os meus hábitos
     const habitosTratados = []; //é onde vou armazenar os habitos já tratados pelo for
+
 
     for(const habito of habitos){
         //Verificando o nome do hábito
@@ -116,9 +153,19 @@ function salvarHabitos(){
     localStorage.setItem("habitos",JSON.stringify(habitosTratados)) //Cria um item no local storage (em forma de texto) com a array de habitos
     
 }
-    //Carregar hábitos
+    //Salvar moedas
+function salvarMoedas(novoTotal){
+    localStorage.setItem("minhasMoedas",JSON.stringify(novoTotal)) // cria um item para a carteira no local storage em forma de texto
+}
+
+//Sistema de carregamento 
+    //carregar habitos
 function carregarHabitos(){
     const armazenados = localStorage.getItem("habitos"); //pega o que esta no local storage 
+    const hoje = new Date().toLocaleDateString('en-CA'); //pega a data de hoje e coloca no padrão canada ano-mês-dia
+    const ultimaVisita = localStorage.getItem('dataAtual'); // Pega a data de ontem no local storage.
+    console.log("Hoje: ",hoje," UltimaVisita: ",ultimaVisita); //Testando para ver se as datas estão corretas.
+    const novoAcesso = (hoje !== ultimaVisita); // Compara se hoje é diferente do ultimo acesso
 
     if (armazenados === null){
         return;
@@ -127,11 +174,35 @@ function carregarHabitos(){
     const habitosCodigo = JSON.parse(armazenados);//Transforma o texto em codigo novamente
 
     for(const habitos of habitosCodigo){
-        addElement(habitos.nome,habitos.estado,habitos.dificuldade);//Joga o nome e o estado de cada hábito para a função addElement
+        let estadoCorreto; // se for um acesso no dia seguinte todos os hábitos resetam
+        
+        if(novoAcesso === true){
+            estadoCorreto = false;
+        }
+        else{
+            estadoCorreto = habitos.estado;
+        }
+        addElement(habitos.nome,estadoCorreto,habitos.dificuldade,true);//Joga o nome e o estado de cada hábito para a função addElement
     }
 
+    localStorage.setItem("dataAtual",hoje);
+
 }
-carregarHabitos();
+    //carregar moedas
+function carregarMoedas(){
+    const visor = document.querySelector("#moedas")
+    const moedasAtuais = localStorage.getItem("minhasMoedas"); // sempre pega o item em string
+    let totalMoedas = parseInt(moedasAtuais);//var para moedas.
+
+    if(moedasAtuais === null){ //lógica para que o visor não mostre null.
+        totalMoedas = 0;
+        localStorage.setItem("minhasMoedas",0); // No primeiro acesso preenche a carteira com 0.
+    }
+    else{
+        totalMoedas = parseInt(moedasAtuais);
+    }
+    visor.textContent = totalMoedas
+}
 
 //Gerenciando o nome do hábito
     //Update de nome
@@ -161,3 +232,6 @@ function salvarNome(evento){
     
     salvarHabitos();
 }
+
+carregarHabitos();
+carregarMoedas();

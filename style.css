@@ -78,11 +78,32 @@ form{
 
 /*Seletores de atributo*/
 li[data-dificuldade = "facil"]{
-    box-shadow:2px 2px 5px 1px rgb(81, 81, 249) ;
+    box-shadow:2px 2px 5px 1px rgb(81, 81, 249);
 }
 li[data-dificuldade = "medio"]{
     box-shadow:2px 2px 5px 1px rgb(4, 247, 61) ;
 }
 li[data-dificuldade = "dificil"]{
     box-shadow:2px 2px 5px 1px rgb(228, 5, 5);
+}
+
+#carteira {
+    /* --- O POSICIONAMENTO --- */
+    position: absolute;
+    right: 15px; /* "Cola" 15px da borda direita */
+    
+    top: 25px; 
+
+    display: flex; /* Para alinhar o cifrão e o <span> */
+    align-items: center;
+    
+    background-color: #333; /* Fundo escuro */
+    color: #ffc107;      /* Cor de "ouro" */
+    font-weight: bold;
+    padding: 5px 10px;
+    border-radius: 8px;
+    border: 1px solid #555;
+}
+#moedas {
+    margin-left: 8px;
 }
