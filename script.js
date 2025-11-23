@@ -1,28 +1,35 @@
 
 //Adicionar
 const botaoAdd = document.querySelector(".btn-new") //Identificando botão no site
-function addElement(nomeDoHabito = "Novo Hábito!",estadoDoHabito = false,dificuldade = "facil",estaCarregando = false){
+function addElement(nomeDoHabito = "Novo Hábito!",estadoDoHabito = false,dificuldade = "facil",estaCarregando = false, streak = 0, streakAnterior=null){
     const novoElemento = document.createElement("li");
     const botaoRemover = document.createElement("button");
     const check = document.createElement("input");
     const listaMae = document.querySelector("#listaMae");
     const textoDoHabito = document.createElement("span"); // como span fica mais organizado
     const entrada = document.createElement("input"); // É a entrada para realizar o update
+    const spanStreak = document.createElement("span");
 
     novoElemento.dataset.dificuldade = dificuldade;// é um atributo que coloca uma classe do tipo data-dificuldade no li
+    novoElemento.dataset.ultimoStreak = streakAnterior;// Vai mostrar o ultimo dia que um hábito foi marcado como feito
+    novoElemento.dataset.streak = streak; // Vê o numero de vezes que seguidas que o usúario cumpriu aquele hábito
 
     textoDoHabito.textContent = nomeDoHabito; //Usa o argumento da função
     botaoRemover.textContent = "X";
     botaoRemover.className = "btn-delete"; //É a classe do CSS para botões.
     check.type = "checkbox";
     entrada.type = "text";
-    entrada.classList.add("hidden") // Mantem o botao escondido inicialmente
-    entrada.value = nomeDoHabito
+    entrada.classList.add("hidden"); // Mantem o botao escondido inicialmente
+    entrada.value = nomeDoHabito;
+    entrada.classList.add("inserirNome")
+    spanStreak.classList.add("streak-span");
+    spanStreak.textContent = "🔥" + streak;
     //novoElemento.className = "habito-concluido";
     
     novoElemento.appendChild(check);
     novoElemento.appendChild(textoDoHabito);
-    novoElemento.appendChild(entrada)
+    novoElemento.appendChild(spanStreak);
+    novoElemento.appendChild(entrada);
     novoElemento.appendChild(botaoRemover);
     listaMae.appendChild(novoElemento);
 
@@ -52,6 +59,7 @@ function mostrarformulario(){
     const input = form.querySelector("input[type = 'text']")
     input.value = "" // Limpa o que ficou no input anteriormente
     form.classList.remove("hidden")
+    input.focus();
 }
 const form = document.querySelector("#form-novoHabito");
     //enviar formulário
@@ -88,7 +96,12 @@ function habitoFeito(evento){//coloquei o ouvinte na função addElement
     const localDoCheck = evento.target;
     const maeDoCheck = localDoCheck.parentElement; // Descobre o li que queremos
     const moedas  = localStorage.getItem("minhasMoedas");
-    const visor = document.querySelector("#moedas")
+    const visor = document.querySelector("#moedas");
+    const hoje = new Date().toLocaleDateString('en-CA');
+    const ultimoStreak = maeDoCheck.dataset.ultimoStreak;//pega o ultimo streak no atributo data
+    const visorStreak = maeDoCheck.querySelector(".streak-span");
+    let streakFinal = parseInt(maeDoCheck.dataset.streak); // pega o streak salvo no card
+
     let totalMoedas = parseInt(moedas);
     const moedasFacil = 1;
     const moedasMedio = 2;
@@ -102,10 +115,10 @@ function habitoFeito(evento){//coloquei o ouvinte na função addElement
         if (maeDoCheck.dataset.dificuldade === "facil"){
             totalMoedas -= moedasFacil;
         }
-        if (maeDoCheck.dataset.dificuldade === "medio"){
+        else if (maeDoCheck.dataset.dificuldade === "medio"){
             totalMoedas -= moedasMedio;
         }
-        if (maeDoCheck.dataset.dificuldade === "dificil"){
+        else if (maeDoCheck.dataset.dificuldade === "dificil"){
             totalMoedas -= moedasDificil;
         }
     }
@@ -113,16 +126,29 @@ function habitoFeito(evento){//coloquei o ouvinte na função addElement
         if (maeDoCheck.dataset.dificuldade === "facil"){
             totalMoedas += moedasFacil;
         }
-        if (maeDoCheck.dataset.dificuldade === "medio"){
+        else if (maeDoCheck.dataset.dificuldade === "medio"){
             totalMoedas += moedasMedio;
         }
-        if (maeDoCheck.dataset.dificuldade === "dificil"){
+        else if (maeDoCheck.dataset.dificuldade === "dificil"){
             totalMoedas += moedasDificil;
+        }
+        //lógica do streak
+        if(ontem===ultimoStreak){ // Se o ultimo streak foi ontem o usuário manteve a corrente
+            streakFinal +=1;
+        }
+        else if(hoje===ultimoStreak){ // Se o ultimo streak foi hoje ele só marcou e desmarcou o hábito
+            streakFinal = streakFinal;
+        }
+        else{ // Se o ultimoStreak não foi ontem nem hoje, o usuário quebrou a corrente. Volta do inicio
+            streakFinal = 1;
         }
     }
 
+    
     visor.textContent = totalMoedas
-
+    maeDoCheck.dataset.streak = streakFinal; //Atualiza o atributo data para o streak final.
+    maeDoCheck.dataset.ultimoStreak = hoje; // O ultimo streak é a data em que marquei o hábito como feito
+    visorStreak.textContent = "🔥" + streakFinal;
     salvarMoedas(totalMoedas);
     salvarHabitos(); //Após adicionar salva a pag
 
@@ -140,18 +166,24 @@ function salvarHabitos(){
         const spanHabito = habito.querySelector("span");
         const nomeDoHabito = spanHabito.textContent;
         const dificuldade = habito.dataset.dificuldade;//Lê o class data que criamos em addElement
+        const streakFinal = parseInt(habito.dataset.streak); // Lê o class data do streak
+        const ultimoStreak = habito.dataset.ultimoStreak;
         //Verificando se o hábito esta marcado como feito
         const habitoFeito = habito.classList.contains("habito-concluido");// Retorna True ou false
-
+        if (isNaN(streakFinal)){
+            streakFinal = 0;
+        }
         habitosTratados.push({
             nome:nomeDoHabito,
             estado: habitoFeito,
-            dificuldade: dificuldade
+            dificuldade: dificuldade,
+            streak: streakFinal,
+            ultimoStreak: ultimoStreak
         })
     }
 
     localStorage.setItem("habitos",JSON.stringify(habitosTratados)) //Cria um item no local storage (em forma de texto) com a array de habitos
-    
+
 }
     //Salvar moedas
 function salvarMoedas(novoTotal){
@@ -164,7 +196,6 @@ function carregarHabitos(){
     const armazenados = localStorage.getItem("habitos"); //pega o que esta no local storage 
     const hoje = new Date().toLocaleDateString('en-CA'); //pega a data de hoje e coloca no padrão canada ano-mês-dia
     const ultimaVisita = localStorage.getItem('dataAtual'); // Pega a data de ontem no local storage.
-    console.log("Hoje: ",hoje," UltimaVisita: ",ultimaVisita); //Testando para ver se as datas estão corretas.
     const novoAcesso = (hoje !== ultimaVisita); // Compara se hoje é diferente do ultimo acesso
 
     if (armazenados === null){
@@ -178,13 +209,14 @@ function carregarHabitos(){
         
         if(novoAcesso === true){
             estadoCorreto = false;
+            salvarHabitos();
+
         }
         else{
             estadoCorreto = habitos.estado;
         }
-        addElement(habitos.nome,estadoCorreto,habitos.dificuldade,true);//Joga o nome e o estado de cada hábito para a função addElement
+        addElement(habitos.nome,estadoCorreto,habitos.dificuldade,true,habitos.streak,habitos.ultimoStreak);//Joga o nome e o estado de cada hábito para a função addElement
     }
-
     localStorage.setItem("dataAtual",hoje);
 
 }
@@ -232,6 +264,15 @@ function salvarNome(evento){
     
     salvarHabitos();
 }
+
+//Streaks
+    //função auxiliar
+function getOntem(){
+    const data = new Date(); // Cria uma nova instância do objeto date
+    data.setDate(data.getDate()-1)//getDate() retorna o DIA do mês.
+    return data.toLocaleDateString('en-CA');
+}
+const ontem = getOntem();
 
 carregarHabitos();
 carregarMoedas();
