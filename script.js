@@ -38,6 +38,9 @@ function addElement(nomeDoHabito = "Novo Hábito!",estadoDoHabito = false,dificu
         novoElemento.classList.add("habito-concluido");
         check.checked = true; //Marca o checkbox de acordo com o estado do hábito
     }
+    else{
+        check.checked = false;
+    }
 
     //Ouvintes
     botaoRemover.addEventListener("click",removeElement);//Ouvinte para remover
@@ -96,11 +99,12 @@ function habitoFeito(evento){//coloquei o ouvinte na função addElement
     const localDoCheck = evento.target;
     const maeDoCheck = localDoCheck.parentElement; // Descobre o li que queremos
     const moedas  = localStorage.getItem("minhasMoedas");
+    const nomeDoHabito = maeDoCheck.querySelector("span")
     const visor = document.querySelector("#moedas");
     const hoje = new Date().toLocaleDateString('en-CA');
-    const ultimoStreak = maeDoCheck.dataset.ultimoStreak;//pega o ultimo streak no atributo data
     const visorStreak = maeDoCheck.querySelector(".streak-span");
     let streakFinal = parseInt(maeDoCheck.dataset.streak); // pega o streak salvo no card
+    let ultimoStreak = maeDoCheck.dataset.ultimoStreak;//pega o ultimo streak no atributo data
 
     let totalMoedas = parseInt(moedas);
     const moedasFacil = 1;
@@ -120,6 +124,11 @@ function habitoFeito(evento){//coloquei o ouvinte na função addElement
         }
         else if (maeDoCheck.dataset.dificuldade === "dificil"){
             totalMoedas -= moedasDificil;
+        }
+
+        if(ultimoStreak===hoje){ //Se o usuário só marcou e desmarcou, então ele não concluiu a tarefa e o ultimo streak foi ontem.
+            streakFinal -= 1;
+            ultimoStreak = ontem;
         }
     }
     else{
@@ -142,16 +151,16 @@ function habitoFeito(evento){//coloquei o ouvinte na função addElement
         else{ // Se o ultimoStreak não foi ontem nem hoje, o usuário quebrou a corrente. Volta do inicio
             streakFinal = 1;
         }
+        ultimoStreak = hoje;
     }
 
     
     visor.textContent = totalMoedas
     maeDoCheck.dataset.streak = streakFinal; //Atualiza o atributo data para o streak final.
-    maeDoCheck.dataset.ultimoStreak = hoje; // O ultimo streak é a data em que marquei o hábito como feito
+    maeDoCheck.dataset.ultimoStreak = ultimoStreak
     visorStreak.textContent = "🔥" + streakFinal;
     salvarMoedas(totalMoedas);
     salvarHabitos(); //Após adicionar salva a pag
-
 }
 
 //Local Storage
@@ -256,7 +265,7 @@ function salvarNome(evento){
     
   
     span.textContent = input.value;
-      if(span.textContent === ""){//Se não inserir nada voltar a ser "Novo hábito"
+      if(span.textContent === ""){//Se não inserir nada volta a ser "Novo hábito"
         span.textContent = "Novo hábito!"
     }
     span.classList.remove("hidden");
