@@ -31,8 +31,8 @@ header img{
     position: absolute;
     left: 5px;  
     bottom: 1px;
-    height: 110px; 
-    width: 130px;  
+    height: 90px; 
+    width: 80px;  
 }
 form{
     display:grid ;
